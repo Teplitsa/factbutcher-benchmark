@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./schema.json",
+  "title": "FactButcher Russian Fact-Checking Benchmark row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "claim_id",
+    "claim",
+    "gold_verdict",
+    "acceptable_verdicts",
+    "benchmark_component",
+    "reference_date",
+    "source_name",
+    "source_url",
+    "source_license",
+    "source_license_url"
+  ],
+  "properties": {
+    "claim_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable unique identifier for the claim."
+    },
+    "claim": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Russian-language claim presented for verification."
+    },
+    "gold_verdict": {
+      "type": "string",
+      "enum": [
+        "TRUE",
+        "FALSE",
+        "MIXED"
+      ],
+      "description": "Primary human-reviewed reference verdict."
+    },
+    "acceptable_verdicts": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "TRUE",
+          "FALSE",
+          "MIXED",
+          "INSUFFICIENT_EVIDENCE"
+        ]
+      },
+      "description": "All verdicts accepted by benchmark scoring."
+    },
+    "benchmark_component": {
+      "type": "string",
+      "enum": [
+        "factbutcher_human_benchmark",
+        "provereno_media"
+      ],
+      "description": "The benchmark component to which the row belongs."
+    },
+    "reference_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date",
+      "description": "Date against which a time-sensitive claim was evaluated, when available."
+    },
+    "source_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable provenance label."
+    },
+    "source_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri",
+      "description": "Original Provereno.Media article URL, when applicable."
+    },
+    "source_license": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "License for adapted source material, when applicable."
+    },
+    "source_license_url": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri",
+      "description": "Link to the source-material license, when applicable."
+    }
+  }
+}

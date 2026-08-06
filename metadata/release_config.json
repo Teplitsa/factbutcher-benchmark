@@ -1,0 +1,14 @@
+{
+  "name": "FactButcher Russian Fact-Checking Benchmark",
+  "description": "A 423-row Russian-language evaluation dataset for claim verification, combining the 274-row FactButcher Human Benchmark derived from real Telegram user requests with 149 claims adapted from Provereno.Media fact-checking articles.",
+  "version": "1.0.0",
+  "metadata_date": "2026-07-28",
+  "publication_date": null,
+  "release_tag": "dataset-v1.0.0",
+  "creator_name": "FactButcher",
+  "publisher_name": "FactButcher",
+  "github_url": null,
+  "huggingface_url": null,
+  "license_name": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/"
+}

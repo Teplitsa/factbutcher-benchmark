@@ -1,0 +1,27 @@
+name: Publish dataset to Hugging Face
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "dataset-v*"
+
+jobs:
+  validate-and-publish:
+    runs-on: ubuntu-latest
+    environment: dataset-publication
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements-validation.txt
+      - run: python scripts/validate_dataset.py
+      - uses: huggingface/hub-sync@v0.1.0
+        with:
+          github_repo_id: ${{ github.repository }}
+          huggingface_repo_id: ${{ vars.HF_DATASET_REPO }}
+          hf_token: ${{ secrets.HF_TOKEN }}
+          repo_type: dataset

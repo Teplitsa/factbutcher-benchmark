@@ -1,0 +1,92 @@
+{
+  "manifest_schema_version": 1,
+  "dataset_name": "FactButcher Russian Fact-Checking Benchmark",
+  "dataset_version": "1.0.0",
+  "generated_on": "2026-07-28",
+  "stats": {
+    "rows": 423,
+    "unique_claim_ids": 423,
+    "benchmark_components": {
+      "factbutcher_human_benchmark": 274,
+      "provereno_media": 149
+    },
+    "primary_verdicts": {
+      "FALSE": 152,
+      "MIXED": 82,
+      "TRUE": 189
+    },
+    "rows_with_multiple_acceptable_verdicts": 120,
+    "human_benchmark_rows_with_multiple_acceptable_verdicts": 99,
+    "provereno_rows_with_source_url": 149,
+    "unique_provereno_source_urls": 146
+  },
+  "files": [
+    {
+      "path": "data/factbutcher_benchmark_v1.jsonl",
+      "bytes": 220480,
+      "sha256": "517e46b55d60df9cb8081646e126e47c88e7969bdc3219f4d5a14627abb7377f",
+      "rows": 423
+    },
+    {
+      "path": "data/factbutcher_benchmark_v1.csv",
+      "bytes": 141426,
+      "sha256": "033d7c4ea4dcc7e3efdd87b2d7f69253a37024a6419dc8ce0c68911b6c8edf1c",
+      "rows": 423
+    },
+    {
+      "path": "README.md",
+      "bytes": 6856,
+      "sha256": "5b07961e403ae28acd2e85178b6e576eca3d391f9e838ab48d1ef1f25aaaa306"
+    },
+    {
+      "path": "README.ru.md",
+      "bytes": 10222,
+      "sha256": "2c38f9d9773c06c5e8aa8be22f3ae42969f08ff0a65f1ec5ab10751f4ee8742a"
+    },
+    {
+      "path": "METHODOLOGY.md",
+      "bytes": 7127,
+      "sha256": "385bcca3bead384a45513f0b44500c32c9a2ed5c8cf93f0483d1648dc01c2233"
+    },
+    {
+      "path": "METHODOLOGY.ru.md",
+      "bytes": 12785,
+      "sha256": "04e9de664c2046cf5dcb9d934eb3393eb72430d3d0577c8b7253474daf07cd11"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 817,
+      "sha256": "493b5d5411647c0e1c4f2582a1b6456143ec8bb9194073e1e74cf01c4909497e"
+    },
+    {
+      "path": "NOTICE.md",
+      "bytes": 1717,
+      "sha256": "5fd0cfdff23814bd8c8815598acac3e8826fc62884b8581ef5998d1d175c02c1"
+    },
+    {
+      "path": "NOTICE.ru.md",
+      "bytes": 2795,
+      "sha256": "ddc1df51cb838eabb58d09a7da2dede4e88f218d1c13973d5bf85edc5a3cadf2"
+    },
+    {
+      "path": "CITATION.cff",
+      "bytes": 364,
+      "sha256": "5545c90a0f7a292ef97f53fb8e9e9829f06b43e906fb55c989b4768413ca04f7"
+    },
+    {
+      "path": "metadata/release_config.json",
+      "bytes": 641,
+      "sha256": "24d2c520d7af409a4ab48d1d51739b3e32ef55cd8a2af8a97d22146f88fd86b2"
+    },
+    {
+      "path": "metadata/schema.json",
+      "bytes": 2376,
+      "sha256": "8c2499416f1edb4d16247ccd8874369a647d76530a6b0259510bcbc40ebf16c2"
+    },
+    {
+      "path": "scripts/validate_dataset.py",
+      "bytes": 15006,
+      "sha256": "77b1c159e3016ca7d3e0f08bea1c7999eb502d367a91a781e8c888709d6b0d61"
+    }
+  ]
+}
