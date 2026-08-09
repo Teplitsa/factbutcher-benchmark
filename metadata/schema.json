@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "./schema.json",
+  "$id": "https://github.com/Teplitsa/factbutcher-benchmark/blob/main/metadata/schema.json",
   "title": "FactButcher Russian Fact-Checking Benchmark row",
   "type": "object",
   "additionalProperties": false,

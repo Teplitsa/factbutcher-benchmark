@@ -75,13 +75,13 @@
     },
     {
       "path": "metadata/release_config.json",
-      "bytes": 641,
-      "sha256": "24d2c520d7af409a4ab48d1d51739b3e32ef55cd8a2af8a97d22146f88fd86b2"
+      "bytes": 757,
+      "sha256": "096aac29adc18ae2ef4bfa7a0461db17684c2b5ff1d6533a041de604b4a08863"
     },
     {
       "path": "metadata/schema.json",
-      "bytes": 2376,
-      "sha256": "8c2499416f1edb4d16247ccd8874369a647d76530a6b0259510bcbc40ebf16c2"
+      "bytes": 2443,
+      "sha256": "eaf287689836d0b28c8a621a31db5ccdf73065304166d1deba8e732365154104"
     },
     {
       "path": "scripts/validate_dataset.py",
