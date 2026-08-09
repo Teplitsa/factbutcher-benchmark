@@ -35,23 +35,23 @@
     },
     {
       "path": "README.md",
-      "bytes": 6856,
-      "sha256": "5b07961e403ae28acd2e85178b6e576eca3d391f9e838ab48d1ef1f25aaaa306"
+      "bytes": 7680,
+      "sha256": "a353c24fef90a08cf842d7b9ab995f42b28b4af8c1b55c3affa675a28395912a"
     },
     {
       "path": "README.ru.md",
-      "bytes": 10222,
-      "sha256": "2c38f9d9773c06c5e8aa8be22f3ae42969f08ff0a65f1ec5ab10751f4ee8742a"
+      "bytes": 11681,
+      "sha256": "88a1bb223bd13c2bfb077f75bbd771f72d2c79313f6fd7d246e28ffae5c601be"
     },
     {
       "path": "METHODOLOGY.md",
-      "bytes": 7127,
-      "sha256": "385bcca3bead384a45513f0b44500c32c9a2ed5c8cf93f0483d1648dc01c2233"
+      "bytes": 7058,
+      "sha256": "4315c2c7e01ec2929d487fa5ccf84ffc5350ff7bcb999f0c4ff4ef504a4ea5cb"
     },
     {
       "path": "METHODOLOGY.ru.md",
-      "bytes": 12785,
-      "sha256": "04e9de664c2046cf5dcb9d934eb3393eb72430d3d0577c8b7253474daf07cd11"
+      "bytes": 12673,
+      "sha256": "c37622027026d6bca85c0e94f4f3b433cbdff81e9d71114029afe45ae683c331"
     },
     {
       "path": "LICENSE",

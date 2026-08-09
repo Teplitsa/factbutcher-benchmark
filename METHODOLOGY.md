@@ -25,11 +25,9 @@ complementary components.
 
 ### FactButcher Human Benchmark
 
-The Human Benchmark is one set of 274 claims derived from real requests sent
-to the FactButcher Telegram product. Requests were collected over more than
-one period so that the benchmark would cover a broader range of actual use.
-Those collection periods are not separate public datasets or benchmark
-components.
+The Human Benchmark contains 274 claims derived from real requests sent to
+the FactButcher Telegram product. The requests came from several collection
+periods, giving the benchmark a broader sample of actual use.
 
 The source requests were used to produce short, self-contained factual claims:
 
@@ -161,8 +159,8 @@ contain only public article URLs and source-license information.
 ## Reproducible export
 
 The public JSONL and CSV are generated deterministically from the frozen
-canonical benchmark files. Internal file layout and collection history do not
-become public dataset categories.
+canonical benchmark files. The public component names describe the dataset's
+two meaningful sources: the Human Benchmark and Provereno.Media.
 
 The build:
 

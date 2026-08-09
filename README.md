@@ -26,50 +26,120 @@ configs:
 
 [English](README.md) · [Русский](README.ru.md)
 
-# FactButcher Russian Fact-Checking Benchmark
+# FactButcher Russian Fact-Checking Dataset
 
-A 423-claim Russian-language evaluation dataset for comparing fact-checking
-models, prompts, and systems on the same reference labels.
+This dataset contains 423 claims in Russian and the results of checking them.
+Some claims are true, some are false, and some allow more than one defensible
+answer.
 
-| Benchmark component | What it represents | Rows |
+You can see what kinds of claims people bring to fact-checkers, investigate a
+few of them yourself, or use the complete collection to compare different
+fact-checking tools.
+
+## A few examples
+
+| Claim | Result | Origin |
+|---|---|---|
+| Слоны боятся мышей | False (`FALSE`) | Request to FactButcher |
+| На западе Китая в чай кладут соль | True (`TRUE`) | Request to FactButcher |
+| Микеланджело говорил, что берет глыбу мрамора и отсекает от нее все лишнее. | False (`FALSE`) | [Provereno.Media](https://provereno.media/blog/2026/05/24/govoril-li-mikelandzhelo-chto-beryot-glybu-mramora-i-otsekaet-ot-neyo-vsyo-lishnee/) |
+
+These are actual rows from the dataset. In the data files, the statement is
+stored in `claim` and its main reviewed result is stored in `gold_verdict`.
+
+## View all claims
+
+Open the [`CSV file`](data/factbutcher_benchmark_v1.csv) in your browser, or
+download it and use Excel, Google Sheets, LibreOffice, or another spreadsheet
+program. Each row contains one claim and the result of checking it.
+
+If you want to investigate a claim before seeing the answer, hide the
+`gold_verdict` and `acceptable_verdicts` columns. Provereno.Media rows include
+a published fact-check in `source_url`. For claims that depend on time,
+`reference_date` shows the date against which the verdict was assigned.
+
+## Where the data came from
+
+The dataset has two parts:
+
+| Part | Contents | Rows |
 |---|---|---:|
-| FactButcher Human Benchmark | Claims derived from real Telegram user requests, then independently checked and reviewed | 274 |
-| Provereno.Media | Claims adapted from published professional fact-checks, with links to the original articles | 149 |
-| **Complete benchmark** |  | **423** |
+| FactButcher Human Benchmark | Claims taken from real requests to the FactButcher Telegram product | 274 |
+| Provereno.Media | Claims taken from published professional fact-checks | 149 |
+| **Total** |  | **423** |
 
-The 274 Human Benchmark claims form one dataset component. Requests were
-collected over time, but collection history is not part of the public dataset
-structure. The claims were extracted with an LLM and edited into
-self-contained benchmark statements; they are not presented as user
-quotations.
+An LLM was used to extract factual claims from the FactButcher requests. The
+claims were then edited into short, self-contained statements, checked, and
+reviewed by a person. The published statements are not verbatim user messages;
+the original messages are not included in the dataset.
 
-## Start here
+The Provereno.Media rows were adapted from published articles. Each row links
+to the original fact-check. The 149 rows point to 146 pages because two
+articles contribute more than one separate claim.
 
-Choose the path that matches what you want to do:
+The collection, checking, and labeling process is described in
+[`METHODOLOGY.md`](METHODOLOGY.md).
 
-| Goal | What to use |
-|---|---|
-| Read, search, sort, or filter rows | The Dataset Viewer on the Hugging Face dataset page |
-| Download data for code or a spreadsheet | [`JSONL`](data/factbutcher_benchmark_v1.jsonl) or [`CSV`](data/factbutcher_benchmark_v1.csv) |
-| Understand how claims and labels were produced | [`METHODOLOGY.md`](METHODOLOGY.md) |
-| Validate a downloaded copy | `python scripts/validate_dataset.py` |
+## Test a model or service
 
-The JSONL file is the canonical typed version. In the CSV file,
-`acceptable_verdicts` uses `|` between multiple accepted labels.
+You can use the dataset as a shared collection of questions with reviewed
+answers. To do this:
 
-Load a local clone with the Hugging Face `datasets` library:
+1. send each `claim` to the model, service, or fact-checking script you want
+   to test;
+2. save its verdict together with the corresponding `claim_id`;
+3. map the answers to `TRUE`, `FALSE`, `MIXED`, or
+   `INSUFFICIENT_EVIDENCE`;
+4. compare them with the reference answers in the dataset.
 
-```python
-from datasets import load_dataset
+How claims are sent depends on the tool you choose. An API-based tool will
+require its own small connecting script and access settings. This repository
+contains the claims and reference answers.
 
-dataset = load_dataset(
-    "json",
-    data_files={"test": "data/factbutcher_benchmark_v1.jsonl"},
-)
-print(dataset["test"][0])
-```
+For a comparable result, run all 423 rows under the same conditions and report
+the model, prompt, and web-search settings. Also state whether
+`provereno.media` was accessible: a tool with web search may find the
+published fact-check there.
 
-Or use Python without an extra library:
+The dataset has one split, `test`. Do not use these rows to train or tune a
+system and then publish its result as an independent evaluation.
+
+## How the verdicts work
+
+`gold_verdict` is the main reviewed result:
+
+- `TRUE` — the claim is supported;
+- `FALSE` — the claim is contradicted;
+- `MIXED` — important parts of the claim have different truth values, or
+  reliable sources do not support one unambiguous answer.
+
+In some cases, two neighboring verdicts are defensible. They are listed in
+`acceptable_verdicts`. This supports two ways of scoring results:
+
+- **acceptable accuracy:** the system's answer appears in
+  `acceptable_verdicts`;
+- **strict accuracy:** the system's answer equals `gold_verdict`.
+
+`INSUFFICIENT_EVIDENCE` can appear among the accepted answers, but it is not
+used as the main verdict.
+
+| Main verdict | Rows |
+|---|---:|
+| `TRUE` | 189 |
+| `FALSE` | 152 |
+| `MIXED` | 82 |
+
+There are 120 rows with more than one accepted verdict.
+
+## Data files
+
+- [`data/factbutcher_benchmark_v1.csv`](data/factbutcher_benchmark_v1.csv) is
+  intended for spreadsheets. Multiple accepted verdicts are separated by
+  `|`.
+- [`data/factbutcher_benchmark_v1.jsonl`](data/factbutcher_benchmark_v1.jsonl)
+  is the main typed version for software. Each line contains one JSON object.
+
+Load the JSONL file with standard Python:
 
 ```python
 import json
@@ -78,122 +148,67 @@ with open("data/factbutcher_benchmark_v1.jsonl", encoding="utf-8") as file:
     rows = [json.loads(line) for line in file]
 ```
 
-## Labels
+Or use the Hugging Face `datasets` library:
 
-`gold_verdict` is the primary reference label:
+```python
+from datasets import load_dataset
 
-- `TRUE`: the central factual claim is supported;
-- `FALSE`: the central factual claim is contradicted;
-- `MIXED`: substantial parts have different truth values, or reliable evidence
-  conflicts on the central point.
-
-`acceptable_verdicts` lists all answers accepted by benchmark scoring. This
-prevents a defensible neighboring label from being marked wrong on genuinely
-ambiguous claims. The primary label remains available for strict scoring.
-
-`INSUFFICIENT_EVIDENCE` can appear only as an acceptable answer. It is not a
-primary gold label.
-
-| Primary verdict | Rows |
-|---|---:|
-| `TRUE` | 189 |
-| `FALSE` | 152 |
-| `MIXED` | 82 |
-
-There are 120 claims with more than one acceptable verdict: 99 in the
-FactButcher Human Benchmark and 21 in the Provereno.Media component.
+dataset = load_dataset(
+    "json",
+    data_files={"test": "data/factbutcher_benchmark_v1.jsonl"},
+)
+```
 
 ## Fields
 
-| Field | Meaning |
+| Field | Contents |
 |---|---|
-| `claim_id` | Stable unique identifier |
-| `claim` | Russian-language claim presented for verification |
-| `gold_verdict` | Primary reference verdict |
-| `acceptable_verdicts` | All verdicts accepted by scoring |
-| `benchmark_component` | `factbutcher_human_benchmark` or `provereno_media` |
-| `reference_date` | Date against which a time-sensitive claim was evaluated, when available |
-| `source_name` | Human-readable provenance |
-| `source_url` | Original Provereno.Media article URL; empty for the Human Benchmark |
+| `claim_id` | Unique identifier for the claim |
+| `claim` | Claim to be checked |
+| `gold_verdict` | Main reviewed verdict |
+| `acceptable_verdicts` | All verdicts accepted when scoring the row |
+| `benchmark_component` | Human Benchmark or Provereno.Media part |
+| `reference_date` | Evaluation date for a time-sensitive claim, when known |
+| `source_name` | Origin of the row |
+| `source_url` | Provereno.Media article; empty for the Human Benchmark |
 | `source_license` | License of adapted source material, when applicable |
-| `source_license_url` | Link to that source-material license |
+| `source_license_url` | Link to the source-material license |
 
-The machine-readable field specification is in
+The full machine-readable field specification is in
 [`metadata/schema.json`](metadata/schema.json).
 
-## How to evaluate a system
+## Limitations
 
-For every row:
-
-1. send `claim` to the system under test;
-2. map its answer to `TRUE`, `FALSE`, `MIXED`, or
-   `INSUFFICIENT_EVIDENCE`;
-3. count it as correct when the mapped answer appears in
-   `acceptable_verdicts`;
-4. also report strict accuracy against `gold_verdict`;
-5. report whether web search was enabled and whether `provereno.media` was
-   available.
-
-Do not train on the test rows and then report the resulting score as a
-comparable evaluation. This dataset has a single `test` split.
-
-## Methodology
-
-The Human Benchmark is based on claims people actually brought to
-FactButcher. The Provereno.Media component provides cases with published
-professional fact-checks and traceable source pages.
-
-Claims and verdicts went through independent checking, adjudication, and final
-human review. Some contestable claims accept more than one verdict. See the
-full process and limitations in [`METHODOLOGY.md`](METHODOLOGY.md).
-
-The 149 Provereno.Media rows link to 146 distinct article pages; two articles
-contribute more than one separate claim.
-
-## Important limitations
-
-- The benchmark is small and contains Russian-language claims.
+- This is a relatively small Russian-language collection.
 - It reflects FactButcher requests and selected Provereno.Media coverage, not
-  every fact-checking topic.
-- Many claims are time-sensitive; use `reference_date` where provided.
-- Web-enabled systems may find a Provereno.Media page that contains the
-  reference answer. Report access conditions so results remain comparable.
-- The dataset provides claims, labels, and Provereno source links. It does not
-  provide a complete evidence bundle for every claim.
+  every possible fact-checking topic.
+- Topics and verdicts occur naturally rather than in equal proportions.
+- Some claims depend on time.
+- Even a human-reviewed verdict can be contestable. Multiple accepted labels
+  represent some, but not all, ambiguity.
+- Human Benchmark rows do not include a complete evidence bundle or written
+  fact-check. Provereno.Media rows link to the published article.
 
 ## Privacy
 
-The dataset contains benchmark claims, not raw Telegram requests. It does not
-include user IDs, trace IDs, raw request records, private review files, or raw
-model transcripts.
+The dataset does not contain original Telegram messages, user identifiers, or
+private FactButcher operational data. It publishes only the prepared claims
+and the fields needed to use them.
 
-## License and attribution
+## License and citation
 
 The dataset is available under
 [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
 
-Every Provereno.Media row links to its source article and carries source-license
-metadata. [`NOTICE.md`](NOTICE.md) describes attribution and the changes made
-when adapting the source material.
+Every Provereno.Media row links to its original article and includes source
+license information. See [`NOTICE.md`](NOTICE.md) for details. Citation
+metadata is available in [`CITATION.cff`](CITATION.cff).
 
-## Citation
+## File validation
 
-Use the metadata in [`CITATION.cff`](CITATION.cff).
-
-## Files and reproducibility
-
-- [`data/factbutcher_benchmark_v1.jsonl`](data/factbutcher_benchmark_v1.jsonl)
-  — canonical data;
-- [`data/factbutcher_benchmark_v1.csv`](data/factbutcher_benchmark_v1.csv)
-  — spreadsheet-friendly export;
-- [`metadata/schema.json`](metadata/schema.json) — row schema;
-- [`metadata/dataset.jsonld`](metadata/dataset.jsonld) — Schema.org dataset
-  metadata;
-- [`metadata/manifest.json`](metadata/manifest.json) — counts and SHA-256
-  checksums.
-
-Validate all rows, both data formats, metadata, attribution fields, and
-checksums:
+This command is intended for maintainers and people who mirror or repackage
+the dataset. It checks that the data, metadata, and checksums agree. You do not
+need to run it simply to browse the dataset.
 
 ```bash
 python scripts/validate_dataset.py
