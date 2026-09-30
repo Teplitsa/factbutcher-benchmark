@@ -36,9 +36,16 @@ The source requests were used to produce short, self-contained factual claims:
    impractically broad candidates were removed;
 3. necessary context such as date or location was restored when it was
    available in the request;
-4. each retained claim was checked independently with web search;
-5. disagreements were adjudicated;
-6. wording and reference labels received final human review.
+4. two independent language models checked each retained claim with web search,
+   without seeing the working FactButcher verdict;
+5. genuine disagreements went to a third checker together with the evidence
+   collected during the first two checks;
+6. for 100 claims, a person assigned the final verdict based on these checks;
+   for the other 174, the models' verdicts were the main source;
+7. ambiguous claims were corrected or removed, after which the wording and
+   reference labels received final human review;
+8. during later benchmark runs, claims for which several tested systems
+   systematically disagreed with the reference label were reviewed again.
 
 The published claims are benchmark formulations. They are not presented as
 verbatim quotations from users. The public files do not contain the raw
@@ -63,6 +70,13 @@ For the benchmark:
 3. article verdicts were mapped to the benchmark label vocabulary;
 4. claim wording and label mapping were independently reviewed;
 5. disagreements were adjudicated and the final rows received human review.
+
+At first, article verdicts meaning "true" or "mostly true" became `TRUE`;
+verdicts meaning "false" or "wrongly attributed" became `FALSE`; and partial or
+context-dependent verdicts became `MIXED`. This was not a mechanical
+conversion: the article's reasoning was read for each row, and the label was
+adjusted or multiple acceptable verdicts were recorded when the argument
+justified it.
 
 Every Provereno.Media row links to its original article. The 149 rows point to
 146 distinct article pages because two articles cover several separate claims.
@@ -116,6 +130,9 @@ add separate checks:
 Cost and latency should be reported separately. They are not evidence that a
 verdict is more accurate.
 
+How FactButcher used these checks to choose a model, and what it found, is
+described in [`RESULTS.md`](RESULTS.md).
+
 ## Web-search conditions
 
 A web-enabled system may find a Provereno.Media page containing the
@@ -152,6 +169,10 @@ contain only public article URLs and source-license information.
   when available.
 - Human-reviewed labels can still be contestable. Multiple accepted labels make
   some, but not all, ambiguity visible.
+- For 174 Human Benchmark claims, the reference labels were mostly assigned by
+  language models; for the other 100, a person relied on their checks. If a
+  tested model makes the same mistakes as those models, the dataset may not
+  reveal them.
 - Public source pages can change or become unavailable.
 - The files provide claims, labels, and Provereno.Media links, not a complete
   evidence package for every row.
@@ -174,3 +195,13 @@ The build:
 The offline validator checks 423 unique IDs, the 274/149 component totals,
 label counts, Provereno.Media attribution, JSONL/CSV equality, row schema,
 metadata, and SHA-256 checksums.
+
+## File validation
+
+This check is intended for maintainers and people who mirror or repackage the
+dataset. You do not need to run it to work with the data.
+
+```bash
+pip install -r requirements-validation.txt
+python scripts/validate_dataset.py
+```

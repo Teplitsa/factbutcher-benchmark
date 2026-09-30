@@ -8,7 +8,7 @@
   "creator_name": "FactButcher",
   "publisher_name": "FactButcher",
   "github_url": "https://github.com/Teplitsa/factbutcher-benchmark",
-  "huggingface_url": "https://huggingface.co/datasets/alexbadin/factbutcher-benchmark",
+  "huggingface_url": "https://huggingface.co/datasets/teplitsa-soc-tech/factbutcher-benchmark",
   "license_name": "CC BY 4.0",
   "license_url": "https://creativecommons.org/licenses/by/4.0/"
 }

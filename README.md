@@ -28,188 +28,155 @@ configs:
 
 # FactButcher Russian Fact-Checking Dataset
 
-This dataset contains 423 claims in Russian and the results of checking them.
-Some claims are true, some are false, and some allow more than one defensible
-answer.
+423 claims in Russian, each with a reference verdict: true, false, or partly
+true. Use it to test how well a model, a prompt, or a service checks facts:
+give it the same claims and compare its answers with the reference ones.
 
-You can see what kinds of claims people bring to fact-checkers, investigate a
-few of them yourself, or use the complete collection to compare different
-fact-checking tools.
+We built the dataset to choose a model and settings for
+[FactButcher.com](https://factbutcher.com), an AI fact-checking service. What
+that comparison showed is described below.
 
-## A few examples
+## Examples
 
-| Claim | Result | Origin |
+| Claim | Verdict | Origin |
 |---|---|---|
-| Слоны боятся мышей | False (`FALSE`) | Request to FactButcher |
-| На западе Китая в чай кладут соль | True (`TRUE`) | Request to FactButcher |
-| Микеланджело говорил, что берет глыбу мрамора и отсекает от нее все лишнее. | False (`FALSE`) | [Provereno.Media](https://provereno.media/blog/2026/05/24/govoril-li-mikelandzhelo-chto-beryot-glybu-mramora-i-otsekaet-ot-neyo-vsyo-lishnee/) |
+| Слоны боятся мышей *(Elephants are afraid of mice)* | False | Request from a FactButcher user |
+| На западе Китая в чай кладут соль *(In western China, people put salt in tea)* | True | Request from a FactButcher user |
+| Микеланджело говорил, что берет глыбу мрамора и отсекает от нее все лишнее. *(Michelangelo said he takes a block of marble and cuts away everything unnecessary.)* | False | [Provereno.Media](https://provereno.media/blog/2026/05/24/govoril-li-mikelandzhelo-chto-beryot-glybu-mramora-i-otsekaet-ot-neyo-vsyo-lishnee/) |
 
-These are actual rows from the dataset. In the data files, the statement is
-stored in `claim` and its main reviewed result is stored in `gold_verdict`.
+All claims are in the [CSV table](data/factbutcher_benchmark_v1.csv). You can
+open it in a browser or in Excel, Google Sheets, or LibreOffice. To check a
+claim yourself before seeing the answer, hide the answer columns:
+`gold_verdict` and `acceptable_verdicts`.
 
-## View all claims
+## Where the claims come from and who assigned the verdicts
 
-Open the [`CSV file`](data/factbutcher_benchmark_v1.csv) in your browser, or
-download it and use Excel, Google Sheets, LibreOffice, or another spreadsheet
-program. Each row contains one claim and the result of checking it.
+| Source | Claims | Who assigned the reference verdict |
+|---|---:|---|
+| Requests to the FactButcher Telegram bot | 274 | For 100 claims, a person assigned the verdict based on the language models' checks. For the other 174, the models mostly assigned the verdict: two checked each claim independently with web search, and when they disagreed, a third checker resolved it. A person reviewed the final wording and verdicts |
+| [Provereno.Media](https://provereno.media) articles | 149 | Provereno.Media's professional fact-checkers. We mapped their verdict to the dataset's scale and double-checked the mapping |
 
-If you want to investigate a claim before seeing the answer, hide the
-`gold_verdict` and `acceptable_verdicts` columns. Provereno.Media rows include
-a published fact-check in `source_url`. For claims that depend on time,
-`reference_date` shows the date against which the verdict was assigned.
+Claims from user requests are not verbatim: we took the checkable statement
+out of the request and, when needed, added context from the same request, such
+as a date or place. The dataset contains no original messages and no data
+about users. Every Provereno.Media claim links to the published fact-check.
 
-## Where the data came from
-
-The dataset has two parts:
-
-| Part | Contents | Rows |
-|---|---|---:|
-| FactButcher Human Benchmark | Claims taken from real requests to the FactButcher Telegram product | 274 |
-| Provereno.Media | Claims taken from published professional fact-checks | 149 |
-| **Total** |  | **423** |
-
-An LLM was used to extract factual claims from the FactButcher requests. The
-claims were then edited into short, self-contained statements, checked, and
-reviewed by a person. The published statements are not verbatim user messages;
-the original messages are not included in the dataset.
-
-The Provereno.Media rows were adapted from published articles. Each row links
-to the original fact-check. The 149 rows point to 146 pages because two
-articles contribute more than one separate claim.
-
-The collection, checking, and labeling process is described in
+Collection and labeling are described in detail in
 [`METHODOLOGY.md`](METHODOLOGY.md).
-
-## Test a model or service
-
-You can use the dataset as a shared collection of questions with reviewed
-answers. To do this:
-
-1. send each `claim` to the model, service, or fact-checking script you want
-   to test;
-2. save its verdict together with the corresponding `claim_id`;
-3. map the answers to `TRUE`, `FALSE`, `MIXED`, or
-   `INSUFFICIENT_EVIDENCE`;
-4. compare them with the reference answers in the dataset.
-
-How claims are sent depends on the tool you choose. An API-based tool will
-require its own small connecting script and access settings. This repository
-contains the claims and reference answers.
-
-For a comparable result, run all 423 rows under the same conditions and report
-the model, prompt, and web-search settings. Also state whether
-`provereno.media` was accessible: a tool with web search may find the
-published fact-check there.
-
-The dataset has one split, `test`. Do not use these rows to train or tune a
-system and then publish its result as an independent evaluation.
 
 ## How the verdicts work
 
-`gold_verdict` is the main reviewed result:
+- **True** (`TRUE`): the claim is supported.
+- **False** (`FALSE`): the claim is contradicted.
+- **Partly true** (`MIXED`): important parts of the claim differ in
+  truthfulness, or reliable sources do not give one clear answer.
 
-- `TRUE` — the claim is supported;
-- `FALSE` — the claim is contradicted;
-- `MIXED` — important parts of the claim have different truth values, or
-  reliable sources do not support one unambiguous answer.
+For some claims, two neighboring verdicts can both be honestly defended, for
+example "false" and "partly true". The main verdict is then in
+`gold_verdict`, and all accepted ones are in `acceptable_verdicts`. "Not
+enough evidence" (`INSUFFICIENT_EVIDENCE`) can be an accepted answer but is
+never the main verdict.
 
-In some cases, two neighboring verdicts are defensible. They are listed in
-`acceptable_verdicts`. This supports two ways of scoring results:
+## What our benchmark showed
 
-- **acceptable accuracy:** the system's answer appears in
-  `acceptable_verdicts`;
-- **strict accuracy:** the system's answer equals `gold_verdict`.
+In July 2026 we ran models from OpenAI, Anthropic, Google, and Perplexity
+through the dataset with different settings. Each model received one claim per
+request, searched the web itself, and returned a verdict, a short explanation,
+and links.
 
-`INSUFFICIENT_EVIDENCE` can appear among the accepted answers, but it is not
-used as the main verdict.
+Selection had three stages: 15 configurations on 10 claims, then 9 on 100, and
+5 finalists on all 423. A configuration here means a model together with its
+settings: how deeply it reasons and how much it searches the web.
 
-| Main verdict | Rows |
+| Finalist | Share of accepted answers |
 |---|---:|
-| `TRUE` | 189 |
-| `FALSE` | 152 |
-| `MIXED` | 82 |
+| OpenAI GPT-5.4-mini, tuned settings | 81.6% |
+| Perplexity Sonar Reasoning Pro | 80.6% |
+| Anthropic Claude Haiku 4.5 | 79.9% |
+| OpenAI GPT-5.6 Luna | 78.7% |
+| OpenAI GPT-5.4-mini, default settings (how FactButcher ran during the test) | 72.8% |
 
-There are 120 rows with more than one accepted verdict.
+- The difference between the top three is not statistically significant;
+  there is no clear winner.
+- Settings mattered more than the choice of model: the same GPT-5.4-mini with
+  tuned settings answered correctly almost 9 percentage points more often than
+  with default ones.
+- Google Gemini models were dropped: they barely searched the web and cited
+  made-up sources.
 
-## Data files
+How we scored, which models were dropped and why, and what one check costs are
+in [`RESULTS.md`](RESULTS.md).
 
-- [`data/factbutcher_benchmark_v1.csv`](data/factbutcher_benchmark_v1.csv) is
-  intended for spreadsheets. Multiple accepted verdicts are separated by
-  `|`.
-- [`data/factbutcher_benchmark_v1.jsonl`](data/factbutcher_benchmark_v1.jsonl)
-  is the main typed version for software. Each line contains one JSON object.
+## Run the dataset yourself
 
-Load the JSONL file with standard Python:
+1. **Load the data.** Download the
+   [CSV](data/factbutcher_benchmark_v1.csv) or
+   [JSONL](data/factbutcher_benchmark_v1.jsonl) file, or load it with the
+   Hugging Face `datasets` library:
 
-```python
-import json
+   ```python
+   from datasets import load_dataset
 
-with open("data/factbutcher_benchmark_v1.jsonl", encoding="utf-8") as file:
-    rows = [json.loads(line) for line in file]
-```
+   rows = load_dataset("teplitsa-soc-tech/factbutcher-benchmark", split="test")
+   ```
 
-Or use the Hugging Face `datasets` library:
+2. **Send each claim** from the `claim` field to the model or service you are
+   testing. Save the answer together with `claim_id`.
+3. **Map the answers to four labels:** `TRUE`, `FALSE`, `MIXED`,
+   `INSUFFICIENT_EVIDENCE`.
+4. **Score the result in two ways:**
+   - *accepted answers*: the share of rows where the answer is in
+     `acceptable_verdicts` (our numbers above are computed this way);
+   - *strict*: the share of rows where the answer equals `gold_verdict`.
 
-```python
-from datasets import load_dataset
+   Count rows the system did not answer as errors.
 
-dataset = load_dataset(
-    "json",
-    data_files={"test": "data/factbutcher_benchmark_v1.jsonl"},
-)
-```
+To make your result comparable with ours, run all 423 rows under the same
+conditions and report the model, prompt, and search settings. Also report
+whether provereno.media was reachable: a system with web search may find the
+published fact-check there. In our final numbers, Provereno.Media claims for
+which the models visited that site were re-run with the site blocked.
+
+The dataset has one split, `test`. Do not use these rows to train or tune a
+system and then publish its result as an independent evaluation.
 
 ## Fields
 
 | Field | Contents |
 |---|---|
-| `claim_id` | Unique identifier for the claim |
-| `claim` | Claim to be checked |
-| `gold_verdict` | Main reviewed verdict |
-| `acceptable_verdicts` | All verdicts accepted when scoring the row |
-| `benchmark_component` | Human Benchmark or Provereno.Media part |
-| `reference_date` | Evaluation date for a time-sensitive claim, when known |
-| `source_name` | Origin of the row |
-| `source_url` | Provereno.Media article; empty for the Human Benchmark |
-| `source_license` | License of adapted source material, when applicable |
-| `source_license_url` | Link to the source-material license |
+| `claim_id` | Unique claim identifier |
+| `claim` | Claim to check |
+| `gold_verdict` | Main reference verdict |
+| `acceptable_verdicts` | All verdicts counted as correct. In the CSV they are separated by a vertical bar; in the JSONL this is a list |
+| `benchmark_component` | Source: `factbutcher_human_benchmark` (user requests) or `provereno_media` |
+| `reference_date` | Date the verdict applies to, when the claim depends on time |
+| `source_name` | Name of the row's source |
+| `source_url` | Provereno.Media article link; empty for user requests |
+| `source_license` | License of the source material, when applicable |
+| `source_license_url` | Link to that license |
 
 The full machine-readable field specification is in
 [`metadata/schema.json`](metadata/schema.json).
 
 ## Limitations
 
-- This is a relatively small Russian-language collection.
-- It reflects FactButcher requests and selected Provereno.Media coverage, not
-  every possible fact-checking topic.
-- Topics and verdicts occur naturally rather than in equal proportions.
-- Some claims depend on time.
-- Even a human-reviewed verdict can be contestable. Multiple accepted labels
-  represent some, but not all, ambiguity.
-- Human Benchmark rows do not include a complete evidence bundle or written
-  fact-check. Provereno.Media rows link to the published article.
+- The collection is small and Russian-only. Topics are whatever FactButcher
+  users brought and Provereno.Media covered; they were not balanced.
+- Some claims depend on time; `reference_date` shows the date the verdict
+  applies to.
+- A reference verdict can still be contestable. `acceptable_verdicts` captures
+  only part of that ambiguity.
+- Reference verdicts for user requests rely heavily on language models.
+  Mistakes shared by those models and a tested model may go unnoticed.
+- Claims from user requests have no written fact-check and no complete list of
+  sources.
 
-## Privacy
-
-The dataset does not contain original Telegram messages, user identifiers, or
-private FactButcher operational data. It publishes only the prepared claims
-and the fields needed to use them.
+Other limitations are listed in [`METHODOLOGY.md`](METHODOLOGY.md).
 
 ## License and citation
 
 The dataset is available under
 [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
-
-Every Provereno.Media row links to its original article and includes source
-license information. See [`NOTICE.md`](NOTICE.md) for details. Citation
-metadata is available in [`CITATION.cff`](CITATION.cff).
-
-## File validation
-
-This command is intended for maintainers and people who mirror or repackage
-the dataset. It checks that the data, metadata, and checksums agree. You do not
-need to run it simply to browse the dataset.
-
-```bash
-python scripts/validate_dataset.py
-```
+Provereno.Media rows link to the original articles; see
+[`NOTICE.md`](NOTICE.md) for details. Citation metadata is in
+[`CITATION.cff`](CITATION.cff).

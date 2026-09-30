@@ -1,11 +1,11 @@
 {
   "@context": "https://schema.org/",
   "@type": "Dataset",
-  "@id": "../",
+  "@id": "https://github.com/Teplitsa/factbutcher-benchmark",
   "name": "FactButcher Russian Fact-Checking Benchmark",
   "alternateName": "FactButcher Benchmark",
   "description": "A 423-row Russian-language evaluation dataset for claim verification, combining the 274-row FactButcher Human Benchmark derived from real Telegram user requests with 149 claims adapted from Provereno.Media fact-checking articles.",
-  "url": "../",
+  "url": "https://github.com/Teplitsa/factbutcher-benchmark",
   "version": "1.0.0",
   "dateModified": "2026-07-28",
   "creator": {
@@ -26,14 +26,14 @@
     "natural language processing"
   ],
   "isAccessibleForFree": true,
-  "citation": "../CITATION.cff",
+  "citation": "https://github.com/Teplitsa/factbutcher-benchmark/blob/main/CITATION.cff",
   "isBasedOn": {
     "@type": "CreativeWork",
     "name": "Provereno.Media fact-checking articles",
     "url": "https://provereno.media/",
     "license": "https://creativecommons.org/licenses/by/4.0/"
   },
-  "measurementTechnique": "../METHODOLOGY.md",
+  "measurementTechnique": "https://github.com/Teplitsa/factbutcher-benchmark/blob/main/METHODOLOGY.md",
   "variableMeasured": [
     {
       "@type": "PropertyValue",
@@ -60,7 +60,7 @@
     {
       "@type": "DataDownload",
       "name": "FactButcher benchmark JSONL",
-      "contentUrl": "../data/factbutcher_benchmark_v1.jsonl",
+      "contentUrl": "https://github.com/Teplitsa/factbutcher-benchmark/releases/download/dataset-v1.0.0/factbutcher_benchmark_v1.jsonl",
       "encodingFormat": "application/x-ndjson",
       "contentSize": "220480 bytes",
       "sha256": "517e46b55d60df9cb8081646e126e47c88e7969bdc3219f4d5a14627abb7377f"
@@ -68,10 +68,17 @@
     {
       "@type": "DataDownload",
       "name": "FactButcher benchmark CSV",
-      "contentUrl": "../data/factbutcher_benchmark_v1.csv",
+      "contentUrl": "https://github.com/Teplitsa/factbutcher-benchmark/releases/download/dataset-v1.0.0/factbutcher_benchmark_v1.csv",
       "encodingFormat": "text/csv",
       "contentSize": "141426 bytes",
       "sha256": "033d7c4ea4dcc7e3efdd87b2d7f69253a37024a6419dc8ce0c68911b6c8edf1c"
     }
-  ]
+  ],
+  "sameAs": "https://huggingface.co/datasets/teplitsa-soc-tech/factbutcher-benchmark",
+  "includedInDataCatalog": {
+    "@type": "DataCatalog",
+    "name": "Hugging Face Hub",
+    "url": "https://huggingface.co/datasets/teplitsa-soc-tech/factbutcher-benchmark"
+  },
+  "datePublished": "2026-08-10"
 }
